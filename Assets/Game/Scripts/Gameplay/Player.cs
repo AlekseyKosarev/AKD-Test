@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Zenject;
 
@@ -16,10 +15,14 @@ public class Player : MonoBehaviour, IControllable
     private IHoldable _currentlyHeldObject;
 
     [Inject]
-    public void Construct(Camera camera, CharacterController characterController)
+    public void Construct(Camera camera)
     {
         _playerCamera = camera;
-        _characterController = characterController;
+    }
+
+    private void Awake()
+    {
+        _characterController = GetComponent<CharacterController>();
     }
 
     public void Move(Vector2 moveInput)
@@ -35,13 +38,11 @@ public class Player : MonoBehaviour, IControllable
         float mouseX = lookInput.x * lookSpeed;
         float mouseY = lookInput.y * lookSpeed;
 
-        // Обновляем вертикальный угол с ограничением
         _verticalRotation -= mouseY;
         _verticalRotation = Mathf.Clamp(_verticalRotation, -maxVerticalAngle, maxVerticalAngle);
 
-        // Применяем вращение
         _playerCamera.transform.localRotation = Quaternion.Euler(_verticalRotation, 0, 0);
-        transform.Rotate(0, mouseX, 0); // Вращаем игрока по горизонтали
+        transform.Rotate(0, mouseX, 0);
     }
 
     public void Interact(Vector2 clickPos)

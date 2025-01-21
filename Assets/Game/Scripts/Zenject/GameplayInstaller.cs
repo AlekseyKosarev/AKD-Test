@@ -6,7 +6,6 @@ public class GameplayInstaller : MonoInstaller
     {
         Container.Bind<Camera>().FromComponentInHierarchy().AsSingle();
         Container.Bind<IControllable>().To<Player>().FromComponentInHierarchy().AsSingle();
-        Container.Bind<CharacterController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<GamePadInputController>().FromComponentInHierarchy().AsSingle();
     }
 }

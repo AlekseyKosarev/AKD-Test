@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -62,9 +61,6 @@ public class GamePadInputController: MonoBehaviour
     private void Update()
     {
         ReadLook();
-    }
-    private void FixedUpdate()
-    {
         ReadMovement();
     }
     private void ReadLook()
