@@ -62,9 +62,11 @@ public class GamePadInputController: MonoBehaviour
     private void Update()
     {
         ReadLook();
+    }
+    private void FixedUpdate()
+    {
         ReadMovement();
     }
-    
     private void ReadLook()
     {
         Vector2 lookVector = _look.ReadValue<Vector2>();
