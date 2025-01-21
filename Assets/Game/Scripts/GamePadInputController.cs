@@ -1,22 +1,25 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
-public class CharacterInputController: MonoBehaviour
+public class GamePadInputController: MonoBehaviour
 {
     private IControllable _controllable;
     private PlayerInputActions _playerInputActions;
     private InputAction _move;
     private InputAction _look;
     private InputAction _interact;
+    
+    [Inject]
+    public void Construct(IControllable controllable)
+    {
+        _controllable = controllable;
+    }
     private void Awake()
     {
         _playerInputActions = new PlayerInputActions();
         _playerInputActions.Enable();
-
-        _controllable = GetComponent<IControllable>();
-        if (_controllable == null)
-            throw new Exception("CharacterInputController requires an IControlable component");
     }
     
     private void OnEnable()
@@ -43,8 +46,8 @@ public class CharacterInputController: MonoBehaviour
 
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {
-        Debug.Log("interact");
-        _controllable.Interact();
+        var position = context.ReadValue<Vector2>();
+        _controllable.Interact(position);
     }
     
     private void Update()

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Zenject;
 
@@ -13,14 +12,10 @@ public class Player : MonoBehaviour, IControllable
     private CharacterController _characterController;
 
     [Inject]
-    public void Construct(Camera camera)
+    public void Construct(Camera camera, CharacterController characterController)
     {
         _playerCamera = camera;
-    }
-
-    private void Awake()
-    {
-        _characterController = GetComponent<CharacterController>();
+        _characterController = characterController;
     }
 
     public void Move(Vector2 moveInput)
@@ -45,8 +40,28 @@ public class Player : MonoBehaviour, IControllable
         transform.Rotate(0, mouseX, 0); // Вращаем игрока по горизонтали
     }
 
-    public void Interact()
+    public void Interact(Vector2 clickPos)
     {
-        Debug.Log("interact click");
+        Ray ray = _playerCamera.ScreenPointToRay(clickPos);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+            if (interactable != null)
+            {
+                interactable.Interact();
+                Debug.Log("Interacted with: " + hit.collider.name);
+            }
+            else
+            {
+                Debug.Log("No interactable object found.");
+            }
+        }
+        else
+        {
+            Debug.Log("Raycast did not hit any object.");
+        }
     }
+
 }
