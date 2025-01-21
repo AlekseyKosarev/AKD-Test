@@ -10,6 +10,7 @@ public class GamePadInputController: MonoBehaviour
     private InputAction _move;
     private InputAction _look;
     private InputAction _interact;
+    private InputAction _drop;
     
     [Inject]
     public void Construct(IControllable controllable)
@@ -29,12 +30,15 @@ public class GamePadInputController: MonoBehaviour
         _move = _playerInputActions.Player.Move;
         _look = _playerInputActions.Player.Look;
         _interact = _playerInputActions.Player.Interact;
-        
+        _drop = _playerInputActions.Player.Drop;
+            
         _move.Enable();
         _look.Enable();
         _interact.Enable();
+        _drop.Enable();
         
         _interact.performed += OnInteractPerformed;
+        _drop.performed += OnDropPerformed;
     }
 
     private void OnDisable()
@@ -42,12 +46,17 @@ public class GamePadInputController: MonoBehaviour
         _move.Disable();
         _look.Disable();
         _interact.Disable();
+        _drop.Disable();
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {
         var position = context.ReadValue<Vector2>();
         _controllable.Interact(position);
+    }
+    private void OnDropPerformed(InputAction.CallbackContext context)
+    {
+        _controllable.Drop();
     }
     
     private void Update()

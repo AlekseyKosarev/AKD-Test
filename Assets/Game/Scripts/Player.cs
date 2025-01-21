@@ -3,6 +3,7 @@ using Zenject;
 
 public class Player : MonoBehaviour, IControllable
 {
+    [SerializeField] private Transform handPosition;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float lookSpeed = 2f;
     [SerializeField] private float verticalRotation = 0f;
@@ -10,6 +11,8 @@ public class Player : MonoBehaviour, IControllable
 
     private Camera _playerCamera;
     private CharacterController _characterController;
+    
+    private IHoldable _currentlyHeldObject;
 
     [Inject]
     public void Construct(Camera camera, CharacterController characterController)
@@ -42,26 +45,26 @@ public class Player : MonoBehaviour, IControllable
 
     public void Interact(Vector2 clickPos)
     {
+        if (_currentlyHeldObject != null)
+            return;
         Ray ray = _playerCamera.ScreenPointToRay(clickPos);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit))
         {
-            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-            if (interactable != null)
+            IHoldable holdable = hit.collider.GetComponent<IHoldable>();
+            if (holdable != null)
             {
-                interactable.Interact();
+                holdable.Hold(handPosition);
+                _currentlyHeldObject = holdable;
                 Debug.Log("Interacted with: " + hit.collider.name);
             }
-            else
-            {
-                Debug.Log("No interactable object found.");
-            }
-        }
-        else
-        {
-            Debug.Log("Raycast did not hit any object.");
         }
     }
 
+    public void Drop()
+    {
+        _currentlyHeldObject.Drop();
+        _currentlyHeldObject = null;
+    }
 }
